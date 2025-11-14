@@ -1,0 +1,179 @@
+═══════════════════════════════════════════════════════════════
+  🔥 FIREBASE - CONFIGURACIÓN RÁPIDA (5 MINUTOS)
+═══════════════════════════════════════════════════════════════
+
+📍 PASO 1: CREAR PROYECTO
+   → https://console.firebase.google.com/
+   → "Agregar proyecto"
+   → Nombre: sistema-qr-cientec
+   → Desactivar Analytics (opcional)
+   → "Crear proyecto"
+
+─────────────────────────────────────────────────────────────
+
+📍 PASO 2: REGISTRAR APP WEB
+   → Clic en ícono </> (Web)
+   → Nombre: Sistema QR Web
+   → NO marcar Hosting
+   → "Registrar app"
+   
+   → COPIAR esta configuración:
+   
+   ┌───────────────────────────────────────────────────────┐
+   │ const firebaseConfig = {                              │
+   │   apiKey: "COPIAR_ESTE_VALOR",                        │
+   │   authDomain: "COPIAR_ESTE_VALOR",                    │
+   │   projectId: "COPIAR_ESTE_VALOR",                     │
+   │   storageBucket: "COPIAR_ESTE_VALOR",                 │
+   │   messagingSenderId: "COPIAR_ESTE_VALOR",             │
+   │   appId: "COPIAR_ESTE_VALOR"                          │
+   │ };                                                    │
+   └───────────────────────────────────────────────────────┘
+
+─────────────────────────────────────────────────────────────
+
+📍 PASO 3: AUTHENTICATION
+   → Menú lateral → "Authentication"
+   → "Comenzar"
+   → Pestaña "Sign-in method"
+   → "Correo electrónico/contraseña" → Habilitar
+   → Guardar
+   
+   → Pestaña "Users"
+   → "Agregar usuario"
+   → Email: admin@cientec.com
+   → Password: [TU CONTRASEÑA SEGURA]
+   → "Agregar usuario"
+   
+   ⚠️ ANOTA ESTAS CREDENCIALES ⚠️
+
+─────────────────────────────────────────────────────────────
+
+📍 PASO 4: FIRESTORE DATABASE
+   → Menú lateral → "Firestore Database"
+   → "Crear base de datos"
+   → Ubicación: us-central (o la más cercana)
+   → "Comenzar en modo de producción"
+   → "Crear"
+   
+   → Pestaña "Reglas"
+   → BORRAR TODO y pegar:
+
+   ┌───────────────────────────────────────────────────────┐
+   │ rules_version = '2';                                  │
+   │ service cloud.firestore {                             │
+   │   match /databases/{database}/documents {             │
+   │     match /personas/{personId} {                      │
+   │       allow read: if true;                            │
+   │       allow create, update, delete:                   │
+   │         if request.auth != null;                      │
+   │     }                                                 │
+   │   }                                                   │
+   │ }                                                     │
+   └───────────────────────────────────────────────────────┘
+   
+   → "Publicar"
+
+─────────────────────────────────────────────────────────────
+
+📍 PASO 5: STORAGE
+   → Menú lateral → "Storage"
+   → "Comenzar"
+   → "Siguiente"
+   → Misma ubicación que Firestore
+   → "Listo"
+   
+   → Pestaña "Rules"
+   → BORRAR TODO y pegar:
+
+   ┌───────────────────────────────────────────────────────┐
+   │ rules_version = '2';                                  │
+   │ service firebase.storage {                            │
+   │   match /b/{bucket}/o {                               │
+   │     match /personas/{personId}/{fileName} {           │
+   │       allow read: if true;                            │
+   │       allow write: if request.auth != null            │
+   │         && request.resource.size < 5 * 1024 * 1024    │
+   │         && request.resource.contentType               │
+   │            .matches('image/.*');                      │
+   │     }                                                 │
+   │   }                                                   │
+   │ }                                                     │
+   └───────────────────────────────────────────────────────┘
+   
+   → "Publicar"
+
+─────────────────────────────────────────────────────────────
+
+📍 PASO 6: ACTUALIZAR CÓDIGO
+   → Abrir archivo: firebase/firebase-config.js
+   → PEGAR los valores del PASO 2:
+
+   ┌───────────────────────────────────────────────────────┐
+   │ const firebaseConfig = {                              │
+   │     apiKey: "AIzaSy...",           ← TU VALOR AQUÍ   │
+   │     authDomain: "sistema-qr...",   ← TU VALOR AQUÍ   │
+   │     projectId: "sistema-qr...",    ← TU VALOR AQUÍ   │
+   │     storageBucket: "sistema...",   ← TU VALOR AQUÍ   │
+   │     messagingSenderId: "123...",   ← TU VALOR AQUÍ   │
+   │     appId: "1:123456..."           ← TU VALOR AQUÍ   │
+   │ };                                                    │
+   └───────────────────────────────────────────────────────┘
+   
+   → Guardar (Ctrl + S)
+
+─────────────────────────────────────────────────────────────
+
+📍 PASO 7: PROBAR
+   → En PowerShell:
+   
+   cd "d:\MY\DESARROLLO\CIENTEC\codigo-qr"
+   python -m http.server 8000
+   
+   → Abrir navegador:
+   http://localhost:8000
+   
+   → Clic en "ADMINISTRADOR"
+   → Email: admin@cientec.com
+   → Password: [tu contraseña]
+   → "Iniciar Sesión"
+   
+   ✅ Si funciona → ¡ÉXITO!
+   ❌ Si no → Revisa consola (F12)
+
+═══════════════════════════════════════════════════════════════
+
+✅ CHECKLIST RÁPIDO:
+
+   [ ] Proyecto creado
+   [ ] App web registrada
+   [ ] Config copiada a firebase-config.js
+   [ ] Authentication habilitado
+   [ ] Usuario admin creado
+   [ ] Firestore creado + reglas
+   [ ] Storage creado + reglas
+   [ ] Servidor corriendo
+   [ ] Login funciona
+
+═══════════════════════════════════════════════════════════════
+
+🆘 ERRORES COMUNES:
+
+   Error: "Firebase is not defined"
+   → Revisa firebase-config.js
+   
+   Error: "auth/invalid-credential"
+   → Verifica email/password del usuario
+   
+   Error: "Missing permissions"
+   → Revisa reglas de Firestore/Storage
+   
+   No se ven cambios
+   → Recarga la página (Ctrl + Shift + R)
+
+═══════════════════════════════════════════════════════════════
+
+📚 DOCUMENTACIÓN COMPLETA:
+   → Lee: GUIA-FIREBASE.md (en esta carpeta)
+
+═══════════════════════════════════════════════════════════════

@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema QR - CIENTEC</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="split-body">
+    <!-- Pantalla Dividida en 2 Secciones -->
+    <div class="split-container">
+        <!-- Sección ADMIN (Izquierda en Desktop / Arriba en Mobile) -->
+        <div class="split-section admin-section" id="adminSection">
+            <div class="section-content">
+                <div class="section-icon">🔐</div>
+                <h1>ADMINISTRADOR</h1>
+                <p>Gestionar Sistema</p>
+            </div>
+        </div>
+
+        <!-- Sección PÚBLICO (Derecha en Desktop / Abajo en Mobile) -->
+        <div class="split-section public-section" id="publicSection">
+            <div class="section-content">
+                <div class="section-icon">👤</div>
+                <h1>USUARIO PÚBLICO</h1>
+                <p>Consultar QR</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Login Admin -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content login-modal">
+            <span class="close-modal">&times;</span>
+            <div class="login-icon">🔐</div>
+            <h2>Login Administrador</h2>
+            <p class="subtitle">Ingresa tus credenciales</p>
+            
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" placeholder="admin@example.com" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Contraseña</label>
+                    <input type="password" id="password" placeholder="••••••••" required>
+                </div>
+                
+                <div id="errorMessage" class="error-message"></div>
+                
+                <button type="submit" class="btn btn-primary btn-full">Iniciar Sesión</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal de Info Público -->
+    <div id="publicModal" class="modal">
+        <div class="modal-content public-modal">
+            <span class="close-modal-public">&times;</span>
+            <div class="public-icon">📷</div>
+            <h2>Escanea tu Código QR</h2>
+            <p class="info-text">
+                Si tienes un código QR asignado, escanéalo con tu dispositivo móvil para ver tu información.
+            </p>
+            <p class="info-text-secondary">
+                El código QR te redirigirá automáticamente a tu página personal con todos tus datos.
+            </p>
+            <div class="qr-demo">
+                <div class="qr-placeholder">
+                    <span style="font-size: 80px;">📱</span>
+                    <p>Usa la cámara de tu celular</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="firebase/firebase-config.js"></script>
+    
+    <script>
+        // Elementos del DOM
+        const loginModal = document.getElementById('loginModal');
+        const publicModal = document.getElementById('publicModal');
+        const adminSection = document.getElementById('adminSection');
+        const publicSection = document.getElementById('publicSection');
+        const closeModal = document.querySelector('.close-modal');
+        const closeModalPublic = document.querySelector('.close-modal-public');
+        const loginForm = document.getElementById('loginForm');
+        const errorMessage = document.getElementById('errorMessage');
+
+        // Click en toda la sección ADMIN
+        adminSection.addEventListener('click', () => {
+            loginModal.style.display = 'flex';
+        });
+
+        // Click en toda la sección PÚBLICO
+        publicSection.addEventListener('click', () => {
+            publicModal.style.display = 'flex';
+        });
+
+        // Cerrar modales
+        closeModal.addEventListener('click', () => {
+            loginModal.style.display = 'none';
+            errorMessage.textContent = '';
+        });
+
+        closeModalPublic.addEventListener('click', () => {
+            publicModal.style.display = 'none';
+        });
+
+        // Cerrar modal al hacer clic fuera
+        window.addEventListener('click', (e) => {
+            if (e.target === loginModal) {
+                loginModal.style.display = 'none';
+                errorMessage.textContent = '';
+            }
+            if (e.target === publicModal) {
+                publicModal.style.display = 'none';
+            }
+        });
+
+        // Login del administrador
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            errorMessage.textContent = '';
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                await firebase.auth().signInWithEmailAndPassword(email, password);
+                window.location.href = 'admin.html';
+            } catch (error) {
+                console.error('Error de login:', error);
+                switch (error.code) {
+                    case 'auth/invalid-email':
+                        errorMessage.textContent = 'Email inválido';
+                        break;
+                    case 'auth/user-not-found':
+                        errorMessage.textContent = 'Usuario no encontrado';
+                        break;
+                    case 'auth/wrong-password':
+                        errorMessage.textContent = 'Contraseña incorrecta';
+                        break;
+                    case 'auth/invalid-credential':
+                        errorMessage.textContent = 'Credenciales inválidas';
+                        break;
+                    default:
+                        errorMessage.textContent = 'Error al iniciar sesión';
+                }
+            }
+        });
+    </script>
+</body>
+</html>

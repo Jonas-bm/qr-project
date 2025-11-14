@@ -1,0 +1,46 @@
+mutation CreateQrCode($qrTypeId: UUID!, $data: String!, $name: String!) @auth(level: USER) {
+  qrCode_insert(data: {
+    qrTypeId: $qrTypeId,
+    userId_expr: "auth.uid",
+    data: $data,
+    name: $name,
+    createdAt_expr: "request.time"
+  })
+}
+
+query GetQrCodesByUser @auth(level: USER) {
+  qrCodes(where: {userId: {eq_expr: "auth.uid"}}) {
+    id
+    name
+    data
+    createdAt
+  }
+}
+
+mutation LogQrCodeScan($qrCodeId: UUID!, $actionType: String!, $details: String) @auth(level: USER) {
+  log_insert(data: {
+    qrCodeId: $qrCodeId,
+    userId_expr: "auth.uid",
+    actionType: $actionType,
+    details: $details,
+    timestamp_expr: "request.time"
+  })
+}
+
+query GetQrCodeDetails($id: UUID!) @auth(level: USER) {
+  qrCode(id: $id) {
+    id
+    name
+    data
+    qrType {
+      id
+      typeName
+      description
+    }
+    user {
+      id
+      displayName
+      email
+    }
+  }
+}

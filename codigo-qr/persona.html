@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Información QR</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="persona-body">
+    <div class="persona-container">
+        <div id="loadingState" class="loading-state">
+            <div class="spinner"></div>
+            <p>Cargando información...</p>
+        </div>
+
+        <div id="errorState" class="error-state" style="display: none;">
+            <div class="error-icon">⚠️</div>
+            <h2>Código QR no válido</h2>
+            <p>No se pudo encontrar la información solicitada.</p>
+        </div>
+
+        <div id="personCard" class="person-card" style="display: none;">
+            <div class="person-card-header">
+                <div id="personPhoto" class="person-photo">
+                    <div class="person-photo-placeholder">👤</div>
+                </div>
+            </div>
+            
+            <div class="person-card-body">
+                <h1 id="personName" class="person-name"></h1>
+                
+                <div class="person-details">
+                    <div class="detail-item">
+                        <span class="detail-icon">🌍</span>
+                        <div class="detail-content">
+                            <span class="detail-label">País</span>
+                            <span id="personPais" class="detail-value"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="detail-item">
+                        <span class="detail-icon">🔖</span>
+                        <div class="detail-content">
+                            <span class="detail-label">Código</span>
+                            <span id="personCodigo" class="detail-value"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="detail-item">
+                        <span class="detail-icon">📁</span>
+                        <div class="detail-content">
+                            <span class="detail-label">Proyecto</span>
+                            <span id="personProyecto" class="detail-value"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="person-card-footer">
+                <p>Sistema de Códigos QR</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="firebase/firebase-config.js"></script>
+    <script src="persona.js"></script>
+</body>
+</html>

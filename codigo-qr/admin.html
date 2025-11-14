@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Admin - QR System</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Header -->
+        <header class="admin-header">
+            <div class="header-content">
+                <h1>📊 Panel de Administración</h1>
+                <button id="logoutBtn" class="btn btn-secondary">Cerrar Sesión</button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="admin-main">
+            <!-- Formulario de Registro/Edición -->
+            <section class="card">
+                <h2 id="formTitle">➕ Registrar Nueva Persona</h2>
+                <form id="personForm" class="person-form">
+                    <input type="hidden" id="personId">
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="nombresApellidos">Nombre y Apellidos *</label>
+                            <input type="text" id="nombresApellidos" placeholder="Ej: Juan Pérez García" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="pais">País *</label>
+                            <input type="text" id="pais" placeholder="Ej: México" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="codigo">Código *</label>
+                            <input type="text" id="codigo" placeholder="Ej: ABC123" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="proyecto">Proyecto *</label>
+                            <input type="text" id="proyecto" placeholder="Ej: Sistema QR" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="foto">Foto (Opcional)</label>
+                        <input type="file" id="foto" accept="image/*">
+                        <div id="fotoPreview" class="foto-preview"></div>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary" id="submitBtn">
+                            Guardar Persona
+                        </button>
+                        <button type="button" class="btn btn-secondary" id="cancelBtn" style="display: none;">
+                            Cancelar
+                        </button>
+                    </div>
+                </form>
+            </section>
+
+            <!-- Tabla de Personas -->
+            <section class="card">
+                <h2>👥 Personas Registradas</h2>
+                <div class="table-container">
+                    <table id="personasTable">
+                        <thead>
+                            <tr>
+                                <th>Nombre y Apellidos</th>
+                                <th>País</th>
+                                <th>Código</th>
+                                <th>Proyecto</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="personasTableBody">
+                            <tr>
+                                <td colspan="5" class="loading">Cargando datos...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modal para QR -->
+    <div id="qrModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Código QR</h2>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div id="qrCodeContainer"></div>
+                <p id="qrPersonName"></p>
+                <div class="modal-actions">
+                    <button id="downloadQR" class="btn btn-primary">Descargar QR</button>
+                    <button id="printQR" class="btn btn-secondary">Imprimir QR</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
+    <script src="firebase/firebase-config.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+    <script src="admin.js"></script>
+</body>
+</html>

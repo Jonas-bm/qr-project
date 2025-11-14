@@ -1,0 +1,16 @@
+{
+  "name": "sistema-qr-firebase",
+  "version": "1.0.0",
+  "description": "Sistema de gestión de códigos QR con Firebase",
+  "scripts": {
+    "start": "firebase serve",
+    "deploy": "firebase deploy"
+  },
+  "dependencies": {
+    "firebase": "^12.6.0",
+    "qrcode": "^1.5.3"
+  },
+  "devDependencies": {
+    "firebase-tools": "^13.0.0"
+  }
+}

@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guía de Inicio Rápido - Sistema QR</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #3B82F6, #2563EB);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        .step {
+            margin-bottom: 40px;
+            padding: 30px;
+            background: #F5F6FA;
+            border-radius: 12px;
+            border-left: 4px solid #3B82F6;
+        }
+        
+        .step h2 {
+            color: #3B82F6;
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+        
+        .step h3 {
+            color: #1F2937;
+            margin: 20px 0 10px;
+            font-size: 16px;
+        }
+        
+        .step ol, .step ul {
+            margin-left: 20px;
+            line-height: 1.8;
+        }
+        
+        .step li {
+            margin-bottom: 8px;
+        }
+        
+        .code-block {
+            background: #1F2937;
+            color: #F5F6FA;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+        }
+        
+        .warning {
+            background: #FEF3C7;
+            border-left: 4px solid #F59E0B;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 8px;
+        }
+        
+        .success {
+            background: #D1FAE5;
+            border-left: 4px solid #10B981;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 8px;
+        }
+        
+        .link {
+            color: #3B82F6;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        .link:hover {
+            text-decoration: underline;
+        }
+        
+        .btn {
+            display: inline-block;
+            background: #3B82F6;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            margin-top: 20px;
+            transition: background 0.3s;
+        }
+        
+        .btn:hover {
+            background: #2563EB;
+        }
+        
+        .checklist {
+            list-style: none;
+            margin-left: 0;
+        }
+        
+        .checklist li:before {
+            content: "☐ ";
+            color: #3B82F6;
+            font-weight: bold;
+            margin-right: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 Guía de Inicio Rápido</h1>
+            <p>Sistema de Gestión de Códigos QR con Firebase</p>
+        </div>
+        
+        <div class="content">
+            
+            <!-- PASO 1 -->
+            <div class="step">
+                <h2>📋 Paso 1: Preparación Inicial</h2>
+                <p>Antes de comenzar, asegúrate de tener:</p>
+                <ul class="checklist">
+                    <li>Una cuenta de Google (para Firebase)</li>
+                    <li>Un navegador web moderno (Chrome, Firefox, Edge)</li>
+                    <li>Editor de código (VS Code recomendado)</li>
+                    <li>Conexión a internet</li>
+                </ul>
+            </div>
+            
+            <!-- PASO 2 -->
+            <div class="step">
+                <h2>🔥 Paso 2: Configurar Firebase</h2>
+                
+                <h3>2.1. Crear Proyecto</h3>
+                <ol>
+                    <li>Ve a <a href="https://console.firebase.google.com/" target="_blank" class="link">Firebase Console</a></li>
+                    <li>Haz clic en "Agregar proyecto"</li>
+                    <li>Nombre del proyecto: <strong>sistema-qr</strong> (o el que prefieras)</li>
+                    <li>Google Analytics: Opcional (puedes deshabilitarlo)</li>
+                    <li>Haz clic en "Crear proyecto"</li>
+                </ol>
+                
+                <h3>2.2. Registrar tu App Web</h3>
+                <ol>
+                    <li>En tu proyecto, haz clic en el ícono web <code>&lt;/&gt;</code></li>
+                    <li>Apodo de la app: <strong>Panel Admin QR</strong></li>
+                    <li>NO marques Firebase Hosting aún</li>
+                    <li>Haz clic en "Registrar app"</li>
+                    <li>COPIA el código de <code>firebaseConfig</code></li>
+                </ol>
+                
+                <h3>2.3. Actualizar firebase-config.js</h3>
+                <p>Abre el archivo <code>firebase/firebase-config.js</code> y pega tu configuración:</p>
+                <div class="code-block">
+const firebaseConfig = {
+    apiKey: "TU_API_KEY_AQUI",
+    authDomain: "tu-proyecto.firebaseapp.com",
+    projectId: "tu-proyecto",
+    storageBucket: "tu-proyecto.appspot.com",
+    messagingSenderId: "123456789",
+    appId: "1:123456789:web:xxxxx"
+};
+                </div>
+            </div>
+            
+            <!-- PASO 3 -->
+            <div class="step">
+                <h2>🔐 Paso 3: Configurar Authentication</h2>
+                <ol>
+                    <li>En Firebase Console, menú lateral → <strong>Authentication</strong></li>
+                    <li>Haz clic en <strong>"Comenzar"</strong></li>
+                    <li>En "Sign-in method" → Habilita <strong>"Correo electrónico/Contraseña"</strong></li>
+                    <li>Ve a la pestaña <strong>"Users"</strong></li>
+                    <li>Haz clic en <strong>"Agregar usuario"</strong></li>
+                    <li>Email: <code>admin@sistema.com</code></li>
+                    <li>Contraseña: Crea una segura (¡Anótala!)</li>
+                    <li>Haz clic en "Agregar usuario"</li>
+                </ol>
+                
+                <div class="success">
+                    ✅ <strong>Importante:</strong> Guarda estas credenciales, las usarás para iniciar sesión.
+                </div>
+            </div>
+            
+            <!-- PASO 4 -->
+            <div class="step">
+                <h2>🗄️ Paso 4: Configurar Firestore Database</h2>
+                <ol>
+                    <li>En Firebase Console → <strong>Firestore Database</strong></li>
+                    <li>Haz clic en <strong>"Crear base de datos"</strong></li>
+                    <li>Ubicación: Elige la más cercana (ej: us-central)</li>
+                    <li>Reglas de seguridad: <strong>"Comenzar en modo de producción"</strong></li>
+                    <li>Haz clic en "Habilitar"</li>
+                    <li>Ve a la pestaña <strong>"Reglas"</strong></li>
+                    <li>Reemplaza todo con esto:</li>
+                </ol>
+                
+                <div class="code-block">
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /personas/{personId} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+  }
+}
+                </div>
+                
+                <ol start="8">
+                    <li>Haz clic en <strong>"Publicar"</strong></li>
+                </ol>
+            </div>
+            
+            <!-- PASO 5 -->
+            <div class="step">
+                <h2>📁 Paso 5: Configurar Storage</h2>
+                <ol>
+                    <li>En Firebase Console → <strong>Storage</strong></li>
+                    <li>Haz clic en <strong>"Comenzar"</strong></li>
+                    <li>Reglas de seguridad: Mantén las predeterminadas</li>
+                    <li>Ubicación: Usa la misma que Firestore</li>
+                    <li>Haz clic en "Listo"</li>
+                    <li>Ve a la pestaña <strong>"Rules"</strong></li>
+                    <li>Reemplaza con esto:</li>
+                </ol>
+                
+                <div class="code-block">
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /personas/{personId}/{allPaths=**} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+  }
+}
+                </div>
+                
+                <ol start="8">
+                    <li>Haz clic en <strong>"Publicar"</strong></li>
+                </ol>
+            </div>
+            
+            <!-- PASO 6 -->
+            <div class="step">
+                <h2>🌐 Paso 6: Probar Localmente</h2>
+                
+                <h3>Opción A: Con Python (más fácil)</h3>
+                <div class="code-block">
+# Abre terminal en la carpeta del proyecto
+cd d:\MY\DESARROLLO\CIENTEC\codigo-qr
+
+# Ejecuta el servidor
+python -m http.server 8000
+                </div>
+                
+                <h3>Opción B: Con Node.js</h3>
+                <div class="code-block">
+# Instala http-server globalmente
+npm install -g http-server
+
+# Ejecuta en la carpeta del proyecto
+http-server -p 8000
+                </div>
+                
+                <h3>Opción C: Con Live Server (VS Code)</h3>
+                <ol>
+                    <li>Instala la extensión "Live Server" en VS Code</li>
+                    <li>Clic derecho en <code>index.html</code></li>
+                    <li>Selecciona "Open with Live Server"</li>
+                </ol>
+                
+                <p>Abre tu navegador en: <a href="http://localhost:8000" target="_blank" class="link">http://localhost:8000</a></p>
+            </div>
+            
+            <!-- PASO 7 -->
+            <div class="step">
+                <h2>✅ Paso 7: Probar el Sistema</h2>
+                
+                <h3>7.1. Login</h3>
+                <ol>
+                    <li>Ve a <code>http://localhost:8000/index.html</code></li>
+                    <li>Ingresa el email y contraseña que creaste</li>
+                    <li>Haz clic en "Iniciar Sesión"</li>
+                    <li>Deberías ser redirigido a <code>admin.html</code></li>
+                </ol>
+                
+                <h3>7.2. Registrar una Persona</h3>
+                <ol>
+                    <li>Completa el formulario:
+                        <ul>
+                            <li>Nombre: Juan Pérez</li>
+                            <li>País: México</li>
+                            <li>Código: TEST001</li>
+                            <li>Proyecto: Prueba QR</li>
+                            <li>Foto: (opcional, selecciona una imagen)</li>
+                        </ul>
+                    </li>
+                    <li>Haz clic en "Guardar Persona"</li>
+                    <li>Verás la persona en la tabla</li>
+                </ol>
+                
+                <h3>7.3. Generar y Probar QR</h3>
+                <ol>
+                    <li>En la tabla, haz clic en "Ver QR"</li>
+                    <li>Se mostrará el código QR</li>
+                    <li>Haz clic en "Descargar QR"</li>
+                    <li>Abre el QR con tu celular o navegador</li>
+                    <li>Deberías ver la página pública con los datos</li>
+                </ol>
+            </div>
+            
+            <!-- PASO 8 -->
+            <div class="step">
+                <h2>🚀 Paso 8: Desplegar en Internet (Opcional)</h2>
+                
+                <h3>Opción A: Firebase Hosting (Gratis)</h3>
+                <div class="code-block">
+# Instalar Firebase CLI
+npm install -g firebase-tools
+
+# Login en Firebase
+firebase login
+
+# Inicializar hosting
+firebase init hosting
+
+# Selecciona:
+# - Tu proyecto
+# - Public directory: . (punto)
+# - SPA: No
+
+# Desplegar
+firebase deploy
+                </div>
+                
+                <div class="success">
+                    🎉 Tu sitio estará en: <code>https://tu-proyecto.web.app</code>
+                </div>
+                
+                <h3>Opción B: GitHub Pages</h3>
+                <ol>
+                    <li>Crea un repositorio en GitHub</li>
+                    <li>Sube todos los archivos</li>
+                    <li>Settings → Pages → Deploy from branch main</li>
+                </ol>
+            </div>
+            
+            <!-- VERIFICACIÓN -->
+            <div class="step">
+                <h2>🔍 Checklist Final</h2>
+                <ul class="checklist">
+                    <li>Firebase configurado correctamente</li>
+                    <li>Authentication habilitado con usuario admin</li>
+                    <li>Firestore con reglas configuradas</li>
+                    <li>Storage con reglas configuradas</li>
+                    <li>firebase-config.js actualizado con tus credenciales</li>
+                    <li>Sistema funcionando localmente</li>
+                    <li>Puedes iniciar sesión</li>
+                    <li>Puedes crear, editar y eliminar personas</li>
+                    <li>Los códigos QR se generan correctamente</li>
+                    <li>La página pública muestra los datos</li>
+                </ul>
+            </div>
+            
+            <!-- AYUDA -->
+            <div class="step">
+                <h2>🆘 ¿Problemas?</h2>
+                
+                <div class="warning">
+                    <strong>Error: "Firebase is not defined"</strong><br>
+                    → Verifica que firebase-config.js tenga tu configuración correcta
+                </div>
+                
+                <div class="warning">
+                    <strong>No puedo iniciar sesión</strong><br>
+                    → Asegúrate de haber creado el usuario en Authentication<br>
+                    → Verifica que Email/Password esté habilitado
+                </div>
+                
+                <div class="warning">
+                    <strong>Error al subir fotos</strong><br>
+                    → Revisa las reglas de Storage<br>
+                    → Verifica que estés autenticado
+                </div>
+                
+                <div class="warning">
+                    <strong>QR no se genera</strong><br>
+                    → Abre la consola del navegador (F12)<br>
+                    → Verifica que no haya errores de QRCode.js
+                </div>
+            </div>
+            
+            <div style="text-align: center; padding: 40px 0;">
+                <h2>🎉 ¡Listo para usar!</h2>
+                <p>Lee el <code>README.md</code> para más detalles</p>
+                <a href="index.html" class="btn">Ir al Sistema →</a>
+            </div>
+            
+        </div>
+    </div>
+</body>
+</html>
