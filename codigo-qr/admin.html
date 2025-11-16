@@ -41,13 +41,13 @@
                     
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="codigo">Código *</label>
-                            <input type="text" id="codigo" placeholder="Ej: ABC123" required>
+                            <label for="condicion">Condición *</label>
+                            <input type="text" id="condicion" placeholder="Ej: EXPOSITOR, ACOMPAÑANTE, JURADO" required>
                         </div>
                         
                         <div class="form-group">
-                            <label for="proyecto">Proyecto *</label>
-                            <input type="text" id="proyecto" placeholder="Ej: Sistema QR" required>
+                            <label for="codigoProyecto">Código de Proyecto *</label>
+                            <input type="text" id="codigoProyecto" placeholder="Ej: A3.A, D17.4" required>
                         </div>
                     </div>
                     
@@ -71,23 +71,87 @@
             <!-- Tabla de Personas -->
             <section class="card">
                 <h2>👥 Personas Registradas</h2>
+                
+                <!-- Leyenda de totales -->
+                <div class="stats-container">
+                    <div class="stat-card">
+                        <div class="stat-icon">👥</div>
+                        <div class="stat-info">
+                            <span class="stat-label">Acompañantes</span>
+                            <span class="stat-value" id="totalAcompanante">0</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">👨‍🏫</div>
+                        <div class="stat-info">
+                            <span class="stat-label">Asesores/as</span>
+                            <span class="stat-value" id="totalAsesor">0</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">🏆</div>
+                        <div class="stat-info">
+                            <span class="stat-label">Expositores/as</span>
+                            <span class="stat-value" id="totalExpositor">0</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">👩‍🏫</div>
+                        <div class="stat-info">
+                            <span class="stat-label">Profesores/as</span>
+                            <span class="stat-value" id="totalProfesor">0</span>
+                        </div>
+                    </div>
+                    <div class="stat-card stat-total">
+                        <div class="stat-icon">📊</div>
+                        <div class="stat-info">
+                            <span class="stat-label">Total General</span>
+                            <span class="stat-value" id="totalGeneral">0</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Campo de búsqueda -->
+                <div class="search-container">
+                    <div class="search-box">
+                        <input 
+                            type="text" 
+                            id="searchInput" 
+                            placeholder="Buscar por nombre o apellido..." 
+                            class="search-input"
+                        />
+                        <button type="button" id="searchBtn" class="btn btn-primary search-btn">
+                            🔍 Buscar
+                        </button>
+                    </div>
+                    <span id="searchResults" class="search-results"></span>
+                </div>
+                
                 <div class="table-container">
                     <table id="personasTable">
                         <thead>
                             <tr>
+                                <th>#</th>
                                 <th>Nombre y Apellidos</th>
+                                <th>Condición</th>
+                                <th>Código Proyecto</th>
                                 <th>País</th>
-                                <th>Código</th>
-                                <th>Proyecto</th>
                                 <th>Acciones</th>
                             </tr>
                         </thead>
                         <tbody id="personasTableBody">
                             <tr>
-                                <td colspan="5" class="loading">Cargando datos...</td>
+                                <td colspan="6" class="loading">Cargando datos...</td>
                             </tr>
                         </tbody>
                     </table>
+                </div>
+                
+                <!-- Paginación -->
+                <div id="pagination" class="pagination" style="display: none;">
+                    <button id="prevPage" class="btn btn-secondary btn-sm">← Anterior</button>
+                    <span id="pageInfo" class="page-info">Página 1</span>
+                    <button id="nextPage" class="btn btn-secondary btn-sm">Siguiente →</button>
                 </div>
             </section>
         </main>
@@ -117,7 +181,11 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
     <script src="firebase/firebase-config.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
-    <script src="admin.js"></script>
+    
+    <!-- QRCode.js Library (Local) -->
+    <script src="qrcode.min.js?v=2"></script>
+    
+    <!-- Admin Script -->
+    <script src="admin.js?v=2"></script>
 </body>
 </html>

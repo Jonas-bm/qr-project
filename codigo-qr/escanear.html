@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Escanear QR - CIENTEC</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .scanner-body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            padding: 20px;
+        }
+        
+        .scanner-container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        .scanner-icon {
+            font-size: 100px;
+            margin-bottom: 20px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        .scanner-container h1 {
+            color: #1F2937;
+            margin-bottom: 20px;
+            font-size: 2rem;
+        }
+        
+        .scanner-container p {
+            color: #6B7280;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+        
+        .qr-preview {
+            background: #F5F6FA;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+        }
+        
+        .qr-preview-icon {
+            font-size: 120px;
+            margin-bottom: 15px;
+        }
+        
+        .instruction-list {
+            text-align: left;
+            background: #EFF6FF;
+            padding: 25px;
+            border-radius: 15px;
+            margin: 20px 0;
+        }
+        
+        .instruction-list h3 {
+            color: #3B82F6;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+        
+        .instruction-list ol {
+            margin: 0;
+            padding-left: 20px;
+        }
+        
+        .instruction-list li {
+            color: #1F2937;
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+        
+        .back-button {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .back-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(245, 87, 108, 0.3);
+        }
+        
+        .highlight {
+            background: #FEF3C7;
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid #F59E0B;
+            margin: 20px 0;
+            font-weight: 500;
+        }
+        
+        @media (max-width: 768px) {
+            .scanner-container {
+                padding: 30px 20px;
+            }
+            
+            .scanner-container h1 {
+                font-size: 1.5rem;
+            }
+            
+            .scanner-icon {
+                font-size: 80px;
+            }
+        }
+    </style>
+</head>
+<body class="scanner-body">
+    <div class="scanner-container">
+        <div class="scanner-icon">📷</div>
+        <h1>Escanea tu Código QR</h1>
+        <p>Si tienes un código QR asignado, escanéalo para ver tu información personal</p>
+        
+        <div class="qr-preview">
+            <div class="qr-preview-icon">📱</div>
+            <p style="font-weight: 600; color: #1F2937;">Usa la cámara de tu celular</p>
+        </div>
+        
+        <div class="instruction-list">
+            <h3>📋 Instrucciones:</h3>
+            <ol>
+                <li>Abre la <strong>cámara</strong> de tu celular</li>
+                <li>Apunta a tu <strong>código QR</strong></li>
+                <li>Toca la <strong>notificación</strong> que aparece</li>
+                <li>Se abrirá tu <strong>página personal</strong> automáticamente</li>
+            </ol>
+        </div>
+        
+        <div class="highlight">
+            ⚠️ <strong>Importante:</strong> El código QR debe haber sido generado por un administrador del sistema.
+        </div>
+        
+        <button class="back-button" onclick="window.location.href='/'">
+            ← Volver al Inicio
+        </button>
+    </div>
+</body>
+</html>

@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Escanear QR - CIENTEC</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .scanner-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .scanner-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .scanner-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .scanner-header h1 {
+            font-size: 28px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .scanner-header p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        #reader {
+            width: 100%;
+            border-radius: 15px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        #reader video {
+            width: 100%;
+            border-radius: 15px;
+        }
+
+        .scanner-status {
+            text-align: center;
+            padding: 15px;
+            background: #f0f0f0;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .scanner-status.success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .scanner-status.error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .scanner-status.scanning {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .scanner-controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .scanner-btn {
+            padding: 12px 24px;
+            border-radius: 10px;
+            border: none;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .scanner-btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .scanner-btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .scanner-btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .scanner-btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .qr-frame {
+            position: relative;
+        }
+
+        .qr-frame::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 250px;
+            height: 250px;
+            border: 3px solid #667eea;
+            border-radius: 15px;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="scanner-container">
+        <div class="scanner-card">
+            <div class="scanner-header">
+                <h1>📷 Escanear Código QR</h1>
+                <p>Apunta la cámara hacia el código QR</p>
+            </div>
+
+            <div id="reader" class="qr-frame"></div>
+
+            <div id="status" class="scanner-status scanning">
+                <div class="loading-spinner"></div>
+                Iniciando cámara...
+            </div>
+
+            <div class="scanner-controls">
+                <button id="backBtn" class="scanner-btn scanner-btn-secondary">
+                    ← Volver
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- HTML5 QR Code Scanner Library -->
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+    
+    <script>
+        const statusDiv = document.getElementById('status');
+        const backBtn = document.getElementById('backBtn');
+        let html5QrCode;
+
+        // Configuración del escáner
+        const config = {
+            fps: 10,
+            qrbox: { width: 250, height: 250 },
+            aspectRatio: 1.0
+        };
+
+        // Función de éxito al escanear
+        function onScanSuccess(decodedText, decodedResult) {
+            // Marcar que ya se dio permiso de cámara
+            sessionStorage.setItem('cameraPermissionGranted', 'true');
+            
+            // Detener el escáner
+            html5QrCode.stop().then(() => {
+                statusDiv.className = 'scanner-status success';
+                statusDiv.innerHTML = '✅ ¡Código QR detectado! Redirigiendo...';
+                
+                // Extraer el ID de la URL escaneada
+                try {
+                    const url = new URL(decodedText);
+                    const params = new URLSearchParams(url.search);
+                    const personId = params.get('id');
+                    
+                    if (personId) {
+                        // Redirigir a la página de la persona
+                        setTimeout(() => {
+                            window.location.href = `persona.html?id=${personId}`;
+                        }, 1000);
+                    } else {
+                        // Si la URL no tiene el formato esperado, intentar abrir directamente
+                        setTimeout(() => {
+                            window.location.href = decodedText;
+                        }, 1000);
+                    }
+                } catch (error) {
+                    // Si no es una URL válida, mostrar error
+                    statusDiv.className = 'scanner-status error';
+                    statusDiv.innerHTML = '❌ El código QR no es válido';
+                    
+                    // Reiniciar el escáner después de 3 segundos
+                    setTimeout(() => {
+                        startScanner();
+                    }, 3000);
+                }
+            }).catch((err) => {
+                console.error('Error al detener el escáner:', err);
+            });
+        }
+
+        // Función de error (se llama continuamente mientras busca)
+        function onScanFailure(error) {
+            // No hacer nada, es normal que falle mientras busca el QR
+        }
+
+        // Iniciar el escáner
+        function startScanner() {
+            // Verificar si ya se dio permiso anteriormente
+            const hasPermission = sessionStorage.getItem('cameraPermissionGranted');
+            
+            if (hasPermission) {
+                statusDiv.className = 'scanner-status scanning';
+                statusDiv.innerHTML = '📸 Apunta la cámara al código QR';
+            } else {
+                statusDiv.className = 'scanner-status scanning';
+                statusDiv.innerHTML = '<div class="loading-spinner"></div> Iniciando cámara...';
+            }
+            
+            html5QrCode = new Html5Qrcode("reader");
+            
+            // Intentar usar la cámara trasera en móviles
+            Html5Qrcode.getCameras().then(cameras => {
+                if (cameras && cameras.length) {
+                    // Buscar cámara trasera
+                    let cameraId = cameras[0].id;
+                    
+                    // En móviles, la cámara trasera suele ser la última
+                    if (cameras.length > 1) {
+                        cameraId = cameras[cameras.length - 1].id;
+                    }
+                    
+                    // Iniciar escáner con la cámara seleccionada
+                    html5QrCode.start(
+                        cameraId,
+                        config,
+                        onScanSuccess,
+                        onScanFailure
+                    ).then(() => {
+                        statusDiv.className = 'scanner-status scanning';
+                        statusDiv.innerHTML = '📸 Apunta la cámara al código QR';
+                    }).catch((err) => {
+                        statusDiv.className = 'scanner-status error';
+                        statusDiv.innerHTML = '❌ Error al acceder a la cámara. Verifica los permisos.';
+                        console.error('Error al iniciar escáner:', err);
+                    });
+                } else {
+                    statusDiv.className = 'scanner-status error';
+                    statusDiv.innerHTML = '❌ No se encontró ninguna cámara en el dispositivo';
+                }
+            }).catch((err) => {
+                statusDiv.className = 'scanner-status error';
+                statusDiv.innerHTML = '❌ Error al buscar cámaras. Verifica los permisos.';
+                console.error('Error al obtener cámaras:', err);
+            });
+        }
+
+        // Iniciar automáticamente al cargar la página
+        window.addEventListener('load', () => {
+            startScanner();
+        });
+
+        // Botón de volver
+        backBtn.addEventListener('click', () => {
+            if (html5QrCode) {
+                html5QrCode.stop().then(() => {
+                    window.location.href = 'index.html';
+                }).catch((err) => {
+                    window.location.href = 'index.html';
+                });
+            } else {
+                window.location.href = 'index.html';
+            }
+        });
+
+        // Limpiar al salir
+        window.addEventListener('beforeunload', () => {
+            if (html5QrCode) {
+                html5QrCode.stop().catch((err) => {
+                    console.error('Error al detener escáner:', err);
+                });
+            }
+        });
+    </script>
+</body>
+</html>

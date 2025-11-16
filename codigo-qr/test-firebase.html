@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Firebase Connection</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            border-bottom: 2px solid #3B82F6;
+            padding-bottom: 10px;
+        }
+        .test-item {
+            margin: 20px 0;
+            padding: 15px;
+            border-left: 4px solid #ccc;
+            background: #f9f9f9;
+        }
+        .test-item.success {
+            border-left-color: #10B981;
+            background: #D1FAE5;
+        }
+        .test-item.error {
+            border-left-color: #EF4444;
+            background: #FEE2E2;
+        }
+        .test-item.pending {
+            border-left-color: #F59E0B;
+            background: #FEF3C7;
+        }
+        .status {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        button {
+            background: #3B82F6;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+        button:hover {
+            background: #2563EB;
+        }
+        .info {
+            margin-top: 20px;
+            padding: 15px;
+            background: #EFF6FF;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔥 Test de Conexión Firebase</h1>
+        
+        <div id="test-firebase-sdk" class="test-item pending">
+            <div class="status">⏳ Cargando Firebase SDK...</div>
+            <div class="details"></div>
+        </div>
+        
+        <div id="test-config" class="test-item pending">
+            <div class="status">⏳ Verificando configuración...</div>
+            <div class="details"></div>
+        </div>
+        
+        <div id="test-auth" class="test-item pending">
+            <div class="status">⏳ Probando Authentication...</div>
+            <div class="details"></div>
+        </div>
+        
+        <div id="test-firestore" class="test-item pending">
+            <div class="status">⏳ Probando Firestore...</div>
+            <div class="details"></div>
+        </div>
+        
+        <div id="test-storage" class="test-item pending">
+            <div class="status">⏳ Probando Storage...</div>
+            <div class="details"></div>
+        </div>
+        
+        <button onclick="runTests()">🔄 Ejecutar Tests Nuevamente</button>
+        
+        <div class="info">
+            <strong>ℹ️ Información:</strong>
+            <ul>
+                <li>✅ Verde = Funcionando correctamente</li>
+                <li>❌ Rojo = Hay un error que debe corregirse</li>
+                <li>⚠️ Amarillo = Advertencia o pendiente de configuración</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
+    <script src="firebase/firebase-config.js"></script>
+    
+    <script>
+        function updateTest(id, status, statusText, details) {
+            const element = document.getElementById(id);
+            element.className = `test-item ${status}`;
+            element.querySelector('.status').innerHTML = statusText;
+            element.querySelector('.details').innerHTML = details;
+        }
+
+        async function runTests() {
+            console.log('🧪 Iniciando tests de Firebase...');
+            
+            // Test 1: Firebase SDK
+            try {
+                if (typeof firebase !== 'undefined') {
+                    updateTest('test-firebase-sdk', 'success', 
+                        '✅ Firebase SDK cargado correctamente',
+                        `Versión: ${firebase.SDK_VERSION || '9.22.0'}`
+                    );
+                } else {
+                    updateTest('test-firebase-sdk', 'error',
+                        '❌ Firebase SDK no se cargó',
+                        'Verifica que los scripts estén correctamente incluidos'
+                    );
+                    return;
+                }
+            } catch (error) {
+                updateTest('test-firebase-sdk', 'error',
+                    '❌ Error al cargar Firebase SDK',
+                    error.message
+                );
+                return;
+            }
+
+            // Test 2: Configuración
+            try {
+                const app = firebase.app();
+                const config = app.options;
+                
+                updateTest('test-config', 'success',
+                    '✅ Configuración cargada correctamente',
+                    `Proyecto: ${config.projectId}<br>
+                     Auth Domain: ${config.authDomain}<br>
+                     Storage: ${config.storageBucket}`
+                );
+            } catch (error) {
+                updateTest('test-config', 'error',
+                    '❌ Error en la configuración',
+                    error.message
+                );
+                return;
+            }
+
+            // Test 3: Authentication
+            try {
+                const auth = firebase.auth();
+                
+                updateTest('test-auth', 'success',
+                    '✅ Authentication inicializado',
+                    'Servicio de autenticación disponible.<br>Estado actual: ' + 
+                    (auth.currentUser ? 'Usuario conectado' : 'No autenticado')
+                );
+            } catch (error) {
+                updateTest('test-auth', 'error',
+                    '❌ Error en Authentication',
+                    error.message + '<br><strong>Solución:</strong> Habilita Authentication en Firebase Console'
+                );
+            }
+
+            // Test 4: Firestore
+            try {
+                const db = firebase.firestore();
+                
+                // Intentar leer la colección personas (puede fallar si no existe)
+                try {
+                    await db.collection('personas').limit(1).get();
+                    updateTest('test-firestore', 'success',
+                        '✅ Firestore funcionando correctamente',
+                        'Conexión exitosa a Firestore Database'
+                    );
+                } catch (firestoreError) {
+                    if (firestoreError.code === 'permission-denied') {
+                        updateTest('test-firestore', 'error',
+                            '⚠️ Firestore: Problema de permisos',
+                            'Firestore está activo pero las reglas pueden estar bloqueando.<br>' +
+                            '<strong>Solución:</strong> Verifica las reglas en Firebase Console → Firestore → Rules'
+                        );
+                    } else {
+                        updateTest('test-firestore', 'success',
+                            '✅ Firestore inicializado',
+                            'Servicio Firestore disponible (colección "personas" aún no tiene datos)'
+                        );
+                    }
+                }
+            } catch (error) {
+                updateTest('test-firestore', 'error',
+                    '❌ Error en Firestore',
+                    error.message + '<br><strong>Solución:</strong> Crea Firestore Database en Firebase Console'
+                );
+            }
+
+            // Test 5: Storage
+            try {
+                const storage = firebase.storage();
+                const storageRef = storage.ref();
+                
+                updateTest('test-storage', 'success',
+                    '✅ Storage inicializado correctamente',
+                    'Servicio de almacenamiento disponible'
+                );
+            } catch (error) {
+                updateTest('test-storage', 'error',
+                    '❌ Error en Storage',
+                    error.message + '<br><strong>Solución:</strong> Habilita Storage en Firebase Console'
+                );
+            }
+
+            console.log('✅ Tests completados');
+        }
+
+        // Ejecutar tests automáticamente al cargar
+        window.addEventListener('load', () => {
+            setTimeout(runTests, 500);
+        });
+    </script>
+</body>
+</html>

@@ -3,29 +3,262 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mi Información QR</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Información CIENTEC</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0f357d 0%, #1a4d99 50%, #0f357d 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+        }
+
+        .persona-container {
+            width: 100%;
+            max-width: 500px;
+        }
+
+        /* LOADING STATE */
+        .loading-state {
+            background: white;
+            border-radius: 25px;
+            padding: 60px 40px;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 5px solid #e8edf5;
+            border-top: 5px solid #0f357d;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-state p {
+            color: #0f357d;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        /* PERSON CARD */
+        .person-card {
+            background: white;
+            border-radius: 25px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        /* HEADER CON LOGO */
+        .person-card-header {
+            background: linear-gradient(135deg, #0f357d 0%, #1a4d99 100%);
+            padding: 40px 30px 30px;
+            text-align: center;
+            position: relative;
+        }
+
+        .cientec-logo {
+            width: 180px;
+            max-width: 60%;
+            height: auto;
+            margin-bottom: 25px;
+            filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.2));
+        }
+
+        .person-photo-container {
+            display: inline-block;
+            position: relative;
+        }
+
+        .person-photo {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            overflow: hidden;
+            background: white;
+            border: 5px solid white;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .person-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .person-photo-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 50px;
+            background: linear-gradient(135deg, #e8edf5 0%, #d4dce8 100%);
+            color: #0f357d;
+        }
+
+        /* BODY */
+        .person-card-body {
+            padding: 35px 30px;
+        }
+
+        .person-name {
+            color: #0f357d;
+            font-size: 28px;
+            font-weight: 800;
+            text-align: center;
+            margin-bottom: 30px;
+            line-height: 1.3;
+        }
+
+        .person-details {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .detail-item {
+            background: linear-gradient(135deg, #f8f9fc 0%, #e8edf5 100%);
+            border-left: 4px solid #0f357d;
+            padding: 18px 20px;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .detail-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(15, 53, 125, 0.15);
+        }
+
+        .detail-label {
+            display: block;
+            color: #0f357d;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 6px;
+        }
+
+        .detail-value {
+            display: block;
+            color: #1a1a1a;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        /* FOOTER */
+        .person-card-footer {
+            background: #f8f9fc;
+            padding: 20px 30px;
+            text-align: center;
+            border-top: 1px solid #e8edf5;
+        }
+
+        .person-card-footer p {
+            color: #0f357d;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .scan-again-btn {
+            background: linear-gradient(135deg, #0f357d 0%, #1a4d99 100%);
+            color: white;
+            border: none;
+            padding: 14px 32px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(15, 53, 125, 0.3);
+            font-family: 'Inter', sans-serif;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
+        }
+
+        .scan-again-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(15, 53, 125, 0.4);
+        }
+
+        .scan-again-btn:active {
+            transform: translateY(0);
+            background: linear-gradient(135deg, #0a2a5f 0%, #143d7a 100%);
+        }
+
+        .scan-again-btn svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        @media (max-width: 480px) {
+            .scan-again-btn {
+                padding: 12px 24px;
+                font-size: 15px;
+            }
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 480px) {
+            .cientec-logo {
+                width: 150px;
+            }
+
+            .person-name {
+                font-size: 24px;
+            }
+
+            .detail-value {
+                font-size: 16px;
+            }
+
+            .person-photo {
+                width: 100px;
+                height: 100px;
+            }
+        }
+    </style>
 </head>
-<body class="persona-body">
+<body>
     <div class="persona-container">
         <div id="loadingState" class="loading-state">
             <div class="spinner"></div>
             <p>Cargando información...</p>
         </div>
 
-        <div id="errorState" class="error-state" style="display: none;">
-            <div class="error-icon">⚠️</div>
-            <h2>Código QR no válido</h2>
-            <p>No se pudo encontrar la información solicitada.</p>
-        </div>
-
         <div id="personCard" class="person-card" style="display: none;">
             <div class="person-card-header">
-                <div id="personPhoto" class="person-photo">
-                    <div class="person-photo-placeholder">👤</div>
+                <img src="public/logocientec.png" alt="CIENTEC" class="cientec-logo">
+                <div class="person-photo-container">
+                    <div id="personPhoto" class="person-photo">
+                        <div class="person-photo-placeholder">👤</div>
+                    </div>
                 </div>
             </div>
             
@@ -34,33 +267,31 @@
                 
                 <div class="person-details">
                     <div class="detail-item">
-                        <span class="detail-icon">🌍</span>
-                        <div class="detail-content">
-                            <span class="detail-label">País</span>
-                            <span id="personPais" class="detail-value"></span>
-                        </div>
+                        <span class="detail-label">Condición</span>
+                        <span id="personCondicion" class="detail-value"></span>
                     </div>
                     
                     <div class="detail-item">
-                        <span class="detail-icon">🔖</span>
-                        <div class="detail-content">
-                            <span class="detail-label">Código</span>
-                            <span id="personCodigo" class="detail-value"></span>
-                        </div>
+                        <span class="detail-label">Código de Proyecto</span>
+                        <span id="personCodigoProyecto" class="detail-value"></span>
                     </div>
                     
                     <div class="detail-item">
-                        <span class="detail-icon">📁</span>
-                        <div class="detail-content">
-                            <span class="detail-label">Proyecto</span>
-                            <span id="personProyecto" class="detail-value"></span>
-                        </div>
+                        <span class="detail-label">País</span>
+                        <span id="personPais" class="detail-value"></span>
                     </div>
                 </div>
             </div>
             
             <div class="person-card-footer">
-                <p>Sistema de Códigos QR</p>
+                <p>CIENTEC 2025 • Sistema de Identificación</p>
+                <button id="scanAgainBtn" class="scan-again-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                    Escanear Otro QR
+                </button>
             </div>
         </div>
     </div>

@@ -19,11 +19,18 @@ const qrPersonName = document.getElementById('qrPersonName');
 const downloadQRBtn = document.getElementById('downloadQR');
 const printQRBtn = document.getElementById('printQR');
 const closeModal = document.querySelector('.close');
+const searchInput = document.getElementById('searchInput');
+const searchBtn = document.getElementById('searchBtn');
+const searchResults = document.getElementById('searchResults');
 
 // Variables globales
 let editingPersonId = null;
 let currentQRCanvas = null;
 let fotoUrlActual = '';
+let allPersonas = [];
+let filteredPersonas = [];
+let currentPage = 1;
+const itemsPerPage = 10;
 
 // Protección de ruta - verificar autenticación
 auth.onAuthStateChanged((user) => {
@@ -95,8 +102,8 @@ personForm.addEventListener('submit', async (e) => {
     try {
         const nombresApellidos = document.getElementById('nombresApellidos').value;
         const pais = document.getElementById('pais').value;
-        const codigo = document.getElementById('codigo').value;
-        const proyecto = document.getElementById('proyecto').value;
+        const condicion = document.getElementById('condicion').value;
+        const codigoProyecto = document.getElementById('codigoProyecto').value;
         const fotoFile = fotoInput.files[0];
         
         let fotoUrl = fotoUrlActual; // Mantener foto actual si existe
@@ -110,8 +117,8 @@ personForm.addEventListener('submit', async (e) => {
         const personaData = {
             nombres_apellidos: nombresApellidos,
             pais: pais,
-            codigo: codigo,
-            proyecto: proyecto,
+            condicion: condicion,
+            codigo_proyecto: codigoProyecto,
             foto_url: fotoUrl || ''
         };
         
@@ -165,38 +172,170 @@ function resetForm() {
 // Cargar todas las personas
 async function loadPersonas() {
     try {
-        personasTableBody.innerHTML = '<tr><td colspan="5" class="loading">Cargando datos...</td></tr>';
+        personasTableBody.innerHTML = '<tr><td colspan="6" class="loading">Cargando datos...</td></tr>';
         
         const snapshot = await db.collection('personas').orderBy('creado', 'desc').get();
         
         if (snapshot.empty) {
-            personasTableBody.innerHTML = '<tr><td colspan="5" class="loading">No hay personas registradas</td></tr>';
+            personasTableBody.innerHTML = '<tr><td colspan="6" class="loading">No hay personas registradas</td></tr>';
+            document.getElementById('pagination').style.display = 'none';
+            searchResults.textContent = '';
             return;
         }
         
-        personasTableBody.innerHTML = '';
-        
+        // Guardar todas las personas y ordenarlas alfabéticamente por nombre
+        allPersonas = [];
         snapshot.forEach((doc) => {
-            const persona = doc.data();
-            const row = createPersonaRow(persona);
-            personasTableBody.appendChild(row);
+            allPersonas.push(doc.data());
         });
+
+        allPersonas.sort((a, b) => {
+            const nombreA = (a.nombres_apellidos || '').toLowerCase();
+            const nombreB = (b.nombres_apellidos || '').toLowerCase();
+            if (nombreA < nombreB) return -1;
+            if (nombreA > nombreB) return 1;
+            return 0;
+        });
+        
+        // Inicializar filteredPersonas con todas las personas
+        filteredPersonas = [...allPersonas];
+        
+        // Resetear a la primera página
+        currentPage = 1;
+        updateSearchResults();
+        updateStatistics();
+        renderPage();
         
     } catch (error) {
         console.error('Error al cargar personas:', error);
-        personasTableBody.innerHTML = '<tr><td colspan="5" class="loading">Error al cargar datos</td></tr>';
+        personasTableBody.innerHTML = '<tr><td colspan="6" class="loading">Error al cargar datos</td></tr>';
     }
 }
 
+// Filtrar personas por búsqueda
+function filterPersonas(searchTerm) {
+    console.log('Filtrando personas...', { 
+        searchTerm, 
+        totalPersonas: allPersonas.length,
+        nombres: allPersonas.map(p => p.nombres_apellidos).slice(0, 3)
+    });
+    
+    if (!searchTerm.trim()) {
+        filteredPersonas = [...allPersonas];
+    } else {
+        const term = searchTerm.toLowerCase().trim();
+        filteredPersonas = allPersonas.filter(persona => {
+            const nombreCompleto = persona.nombres_apellidos.toLowerCase();
+            return nombreCompleto.includes(term);
+        });
+    }
+    
+    console.log('Resultados filtrados:', filteredPersonas.length);
+    
+    // Resetear a la primera página después de filtrar
+    currentPage = 1;
+    updateSearchResults();
+    updateStatistics();
+    renderPage();
+}
+
+// Calcular y actualizar estadísticas
+function updateStatistics() {
+    const stats = {
+        acompanante: 0,
+        asesor: 0,
+        expositor: 0,
+        profesor: 0
+    };
+    
+    allPersonas.forEach(persona => {
+        const condicion = (persona.condicion || '').toLowerCase().trim();
+        
+        if (condicion.includes('acompañante') || condicion.includes('acompanante')) {
+            stats.acompanante++;
+        } else if (condicion.includes('asesor') || condicion.includes('asesora')) {
+            stats.asesor++;
+        } else if (condicion.includes('expositor') || condicion.includes('expositora')) {
+            stats.expositor++;
+        } else if (condicion.includes('profesor') || condicion.includes('profesora')) {
+            stats.profesor++;
+        }
+    });
+    
+    // Actualizar los elementos en el DOM
+    document.getElementById('totalAcompanante').textContent = stats.acompanante;
+    document.getElementById('totalAsesor').textContent = stats.asesor;
+    document.getElementById('totalExpositor').textContent = stats.expositor;
+    document.getElementById('totalProfesor').textContent = stats.profesor;
+    document.getElementById('totalGeneral').textContent = allPersonas.length;
+}
+
+// Actualizar contador de resultados de búsqueda
+function updateSearchResults() {
+    const searchTerm = searchInput.value.trim();
+    
+    if (!searchTerm) {
+        searchResults.textContent = `Total: ${allPersonas.length} personas`;
+        searchResults.classList.remove('active');
+    } else {
+        searchResults.textContent = `${filteredPersonas.length} resultado${filteredPersonas.length !== 1 ? 's' : ''} de ${allPersonas.length}`;
+        searchResults.classList.add('active');
+    }
+}
+
+// Renderizar página actual
+function renderPage() {
+    personasTableBody.innerHTML = '';
+    
+    if (filteredPersonas.length === 0) {
+        personasTableBody.innerHTML = '<tr><td colspan="6" class="loading">No se encontraron personas con ese nombre</td></tr>';
+        document.getElementById('pagination').style.display = 'none';
+        return;
+    }
+    
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const pagePersonas = filteredPersonas.slice(startIndex, endIndex);
+    
+    pagePersonas.forEach((persona, index) => {
+        const globalIndex = startIndex + index + 1;
+        const row = createPersonaRow(persona, globalIndex);
+        personasTableBody.appendChild(row);
+    });
+    
+    updatePagination();
+}
+
+// Actualizar controles de paginación
+function updatePagination() {
+    const totalPages = Math.ceil(filteredPersonas.length / itemsPerPage);
+    const pagination = document.getElementById('pagination');
+    const prevBtn = document.getElementById('prevPage');
+    const nextBtn = document.getElementById('nextPage');
+    const pageInfo = document.getElementById('pageInfo');
+    
+    if (totalPages <= 1) {
+        pagination.style.display = 'none';
+        return;
+    }
+    
+    pagination.style.display = 'flex';
+    pageInfo.textContent = `Página ${currentPage} de ${totalPages} (${filteredPersonas.length} persona${filteredPersonas.length !== 1 ? 's' : ''})`;
+    
+    prevBtn.disabled = currentPage === 1;
+    nextBtn.disabled = currentPage === totalPages;
+}
+
 // Crear fila de tabla
-function createPersonaRow(persona) {
+function createPersonaRow(persona, numero) {
     const tr = document.createElement('tr');
     
     tr.innerHTML = `
+        <td>${numero}</td>
         <td>${persona.nombres_apellidos}</td>
+        <td>${persona.condicion || 'No especificado'}</td>
+        <td>${persona.codigo_proyecto || 'No especificado'}</td>
         <td>${persona.pais}</td>
-        <td>${persona.codigo}</td>
-        <td>${persona.proyecto}</td>
         <td>
             <div class="action-buttons">
                 <button class="btn btn-primary btn-sm" onclick="viewQR('${persona.id}', '${persona.nombres_apellidos}')">
@@ -230,8 +369,8 @@ async function editPersona(id) {
         // Llenar formulario
         document.getElementById('nombresApellidos').value = persona.nombres_apellidos;
         document.getElementById('pais').value = persona.pais;
-        document.getElementById('codigo').value = persona.codigo;
-        document.getElementById('proyecto').value = persona.proyecto;
+        document.getElementById('condicion').value = persona.condicion || '';
+        document.getElementById('codigoProyecto').value = persona.codigo_proyecto || '';
         
         // Si tiene foto, mostrar preview
         if (persona.foto_url) {
@@ -294,26 +433,32 @@ function viewQR(id, nombre) {
     // URL pública de la persona
     const personaUrl = `${window.location.origin}/persona.html?id=${id}`;
     
-    // Generar QR
-    QRCode.toCanvas(personaUrl, {
-        width: 300,
-        margin: 2,
-        color: {
-            dark: '#000000',
-            light: '#FFFFFF'
-        }
-    }, (error, canvas) => {
-        if (error) {
-            console.error('Error al generar QR:', error);
-            alert('Error al generar código QR');
-            return;
-        }
+    try {
+        // Crear un div temporal para el QR
+        const qrDiv = document.createElement('div');
+        qrCodeContainer.appendChild(qrDiv);
         
-        currentQRCanvas = canvas;
-        qrCodeContainer.appendChild(canvas);
-        qrPersonName.textContent = nombre;
-        qrModal.style.display = 'block';
-    });
+        // Generar QR usando QRCode constructor
+        new QRCode(qrDiv, {
+            text: personaUrl,
+            width: 300,
+            height: 300,
+            colorDark: '#000000',
+            colorLight: '#FFFFFF',
+            correctLevel: QRCode.CorrectLevel.H
+        });
+        
+        // Guardar el canvas para descarga (el QRCode crea un canvas automáticamente)
+        setTimeout(() => {
+            currentQRCanvas = qrDiv.querySelector('canvas');
+            qrPersonName.textContent = nombre;
+            qrModal.style.display = 'block';
+        }, 100);
+        
+    } catch (error) {
+        console.error('Error en viewQR:', error);
+        alert('Error al generar código QR. Asegúrate de que la biblioteca QRCode está cargada.');
+    }
 }
 
 // Descargar QR
@@ -376,3 +521,35 @@ window.addEventListener('click', (e) => {
 window.editPersona = editPersona;
 window.deletePersona = deletePersona;
 window.viewQR = viewQR;
+
+// Event listeners de paginación
+document.getElementById('prevPage').addEventListener('click', () => {
+    if (currentPage > 1) {
+        currentPage--;
+        renderPage();
+    }
+});
+
+document.getElementById('nextPage').addEventListener('click', () => {
+    const totalPages = Math.ceil(filteredPersonas.length / itemsPerPage);
+    if (currentPage < totalPages) {
+        currentPage++;
+        renderPage();
+    }
+});
+
+// Event listeners de búsqueda
+searchBtn.addEventListener('click', () => {
+    filterPersonas(searchInput.value);
+});
+
+searchInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+        filterPersonas(searchInput.value);
+    }
+});
+
+// También filtrar mientras escribe (tiempo real)
+searchInput.addEventListener('input', (e) => {
+    filterPersonas(e.target.value);
+});

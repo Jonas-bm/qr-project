@@ -57,27 +57,6 @@
         </div>
     </div>
 
-    <!-- Modal de Info Público -->
-    <div id="publicModal" class="modal">
-        <div class="modal-content public-modal">
-            <span class="close-modal-public">&times;</span>
-            <div class="public-icon">📷</div>
-            <h2>Escanea tu Código QR</h2>
-            <p class="info-text">
-                Si tienes un código QR asignado, escanéalo con tu dispositivo móvil para ver tu información.
-            </p>
-            <p class="info-text-secondary">
-                El código QR te redirigirá automáticamente a tu página personal con todos tus datos.
-            </p>
-            <div class="qr-demo">
-                <div class="qr-placeholder">
-                    <span style="font-size: 80px;">📱</span>
-                    <p>Usa la cámara de tu celular</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
@@ -86,11 +65,9 @@
     <script>
         // Elementos del DOM
         const loginModal = document.getElementById('loginModal');
-        const publicModal = document.getElementById('publicModal');
         const adminSection = document.getElementById('adminSection');
         const publicSection = document.getElementById('publicSection');
         const closeModal = document.querySelector('.close-modal');
-        const closeModalPublic = document.querySelector('.close-modal-public');
         const loginForm = document.getElementById('loginForm');
         const errorMessage = document.getElementById('errorMessage');
 
@@ -99,19 +76,15 @@
             loginModal.style.display = 'flex';
         });
 
-        // Click en toda la sección PÚBLICO
+        // Click en toda la sección PÚBLICO - Redirigir a página de escaneo con cámara
         publicSection.addEventListener('click', () => {
-            publicModal.style.display = 'flex';
+            window.location.href = 'scanner.html';
         });
 
-        // Cerrar modales
+        // Cerrar modal
         closeModal.addEventListener('click', () => {
             loginModal.style.display = 'none';
             errorMessage.textContent = '';
-        });
-
-        closeModalPublic.addEventListener('click', () => {
-            publicModal.style.display = 'none';
         });
 
         // Cerrar modal al hacer clic fuera
@@ -119,9 +92,6 @@
             if (e.target === loginModal) {
                 loginModal.style.display = 'none';
                 errorMessage.textContent = '';
-            }
-            if (e.target === publicModal) {
-                publicModal.style.display = 'none';
             }
         });
 
